@@ -4,7 +4,7 @@ Package for interfacing with any [SubSonic API](https://www.subsonic.org/pages/a
 
 ## Features
 
-    - Fetch
+    - Fetch Artists and Albums from the server
 
 ## Getting started
 
@@ -54,12 +54,3 @@ Future<void> fetch() async {
     SubSonicResponse response = await client.getArtists();
 }
 ```
-
-
-
-
-## Additional information
-
-TODO: Tell users more about the package: where to find more information, how to 
-contribute to the package, how to file issues, what response they can expect 
-from the package authors, and more.
