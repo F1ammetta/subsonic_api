@@ -1,9 +1,8 @@
-// TODO: Put public facing types in this file.
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:crypto/crypto.dart';
-import 'subsonic_wrapper_types.dart';
+import 'subsonicapi_types.dart';
 
 class SubSonicClient {
   final String _url;
