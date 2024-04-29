@@ -61,11 +61,6 @@ class Song {
         artistId: json['artistId'],
         type: json['type']);
   }
-
-  @override
-  String toString() {
-    return 'Song: {id: $id, parent: $parent, title: $title, album: $album, artist: $artist, isDir: $isDir, coverArt: $coverArt, created: $created, duration: $duration, bitRate: $bitRate, size: $size, suffix: $suffix, contentType: $contentType, isVideo: $isVideo, path: $path, albumId: $albumId, artistId: $artistId, type: $type}';
-  }
 }
 
 class Album {
@@ -213,6 +208,30 @@ class Artists {
   }
 }
 
+class Genre {
+  final String? value;
+  final int? songCount;
+  final int? albumCount;
+  final int? duration;
+  final String? coverArt;
+
+  Genre(
+      {this.value,
+      this.songCount,
+      this.albumCount,
+      this.duration,
+      this.coverArt});
+
+  factory Genre.fromJson(Map<String, dynamic> json) {
+    return Genre(
+        value: json['value'],
+        songCount: json['songCount'],
+        albumCount: json['albumCount'],
+        duration: json['duration'],
+        coverArt: json['coverArt']);
+  }
+}
+
 class SubSonicResponse {
   final String status;
   final String version;
@@ -229,6 +248,7 @@ class SubSonicResponse {
   final Map<String, dynamic>? indexes;
   final Map<String, dynamic>? directory;
   final Map<String, dynamic>? json;
+  final List<Genre>? genres;
 
   SubSonicResponse(
       {required this.status,
@@ -245,7 +265,8 @@ class SubSonicResponse {
       this.musicFolders,
       this.indexes,
       this.directory,
-      this.json});
+      this.json,
+      this.genres});
 
   factory SubSonicResponse.fromJson(Map<String, dynamic> json) {
     json = json['subsonic-response'];
@@ -261,6 +282,10 @@ class SubSonicResponse {
         artist: Artist.fromJson(json['artist']),
         albums: json['albums'],
         album: Album.fromJson(json['album']),
+        genres: json['genres'] != null
+            ? List<Genre>.from(
+                json['genres']['genre'].map((x) => Genre.fromJson(x)))
+            : null,
         musicFolders: json['musicFolders'],
         indexes: json['indexes'],
         directory: json['directory'],

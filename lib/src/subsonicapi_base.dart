@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:crypto/crypto.dart';
 import 'subsonicapi_types.dart';
+import 'dart:typed_data';
 
 class SubSonicClient {
   final String _url;
@@ -113,5 +114,45 @@ class SubSonicClient {
     final response = await http.get(Uri.parse(
         '$_url/rest/getAlbum.view?u=$_username&t=$_token&s=$_salt&c=$_clientName&v=$_clientVersion&id=$album&f=$format'));
     return SubSonicResponse.fromJson(json.decode(response.body));
+  }
+
+  /// Get Genres
+  ///
+  /// Gets all genres in the music collection.
+  ///
+  /// Returns a [SubSonicResponse] object.
+  /// The [SubSonicResponse] object contains a list of [Genre] objects.
+  Future<SubSonicResponse> getGenres() async {
+    final response = await http.get(Uri.parse(
+        '$_url/rest/getGenres.view?u=$_username&t=$_token&s=$_salt&c=$_clientName&v=$_clientVersion&f=$format'));
+    return SubSonicResponse.fromJson(json.decode(response.body));
+  }
+
+  /// Stream Media
+  ///
+  /// Streams media from the server.
+  ///
+  /// Returns a [Stream] of [Uint8List].
+  Stream<Uint8List> stream(String id) async* {
+    final request = http.StreamedRequest(
+        'GET',
+        Uri.parse(
+            '$_url/rest/stream.view?u=$_username&t=$_token&s=$_salt&c=$_clientName&v=$_clientVersion&id=$id&f=$format'));
+    unawaited(request.sink.close());
+    final response = await request.send();
+
+    await for (var chunk in response.stream) {
+      yield Uint8List.fromList(chunk);
+    }
+  }
+
+  /// Get stream URL
+  ///
+  /// Gets the stream URL for a given ID.
+  ///
+  /// Returns a [Uri] containing the stream URL.
+  Uri getStreamUrl(String id) {
+    return Uri.parse(
+        '$_url/rest/stream.view?u=$_username&t=$_token&s=$_salt&c=$_clientName&v=$_clientVersion&id=$id&f=$format');
   }
 }
