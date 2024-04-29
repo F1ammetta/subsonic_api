@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:crypto/crypto.dart';
 import 'subsonicapi_types.dart';
+import 'internal_types.dart';
 import 'dart:typed_data';
 
 class SubSonicClient {
@@ -39,6 +40,17 @@ class SubSonicClient {
     final response = await http.get(Uri.parse(
         '$_url/rest/ping.view?u=$_username&t=$_token&s=$_salt&c=$_clientName&v=$_clientVersion&f=$format'));
     return SubSonicResponse.fromJson(json.decode(response.body));
+  }
+
+  /// Get license
+  ///
+  /// Gets the license information for the server.
+  /// Returns a [License] object.
+  Future<License> getLicense() async {
+    final response = await http.get(Uri.parse(
+        '$_url/rest/getLicense.view?u=$_username&t=$_token&s=$_salt&c=$_clientName&v=$_clientVersion&f=$format'));
+    var res = SubSonicResponse.fromJson(json.decode(response.body));
+    return res.license!;
   }
 
   // TODO: Add MusicFolders class
@@ -82,50 +94,50 @@ class SubSonicClient {
   ///
   /// Gets all artists in the music collection.
   ///
-  /// Returns a [SubSonicResponse] object.
-  /// The [SubSonicResponse] object contains an [Artists] object.
-  Future<SubSonicResponse> getArtists() async {
+  /// Returns a [List] of [Artist] objects.
+  Future<List<Artist>> getArtists() async {
     final response = await http.get(Uri.parse(
         '$_url/rest/getArtists.view?u=$_username&t=$_token&s=$_salt&c=$_clientName&v=$_clientVersion&f=$format'));
-    return SubSonicResponse.fromJson(json.decode(response.body));
+    var res = SubSonicResponse.fromJson(json.decode(response.body));
+    return res.artists!.index!.artists!;
   }
 
   /// Get artist
   ///
   /// Gets an artist by ID.
   ///
-  /// Returns a [SubSonicResponse] object.
-  /// The [SubSonicResponse] object contains an [Artist] object.
+  /// Returns an [Artist] object.
   /// The [Artist] object contains a list of [Album] objects.
-  Future<SubSonicResponse> getArtist(String artistId) async {
+  Future<Artist> getArtist(String artistId) async {
     final response = await http.get(Uri.parse(
         '$_url/rest/getArtist.view?u=$_username&t=$_token&s=$_salt&c=$_clientName&v=$_clientVersion&id=$artistId&f=$format'));
-    return SubSonicResponse.fromJson(json.decode(response.body));
+    var res = SubSonicResponse.fromJson(json.decode(response.body));
+    return res.artist!;
   }
 
   /// Get album
   ///
   /// Gets an album by ID.
   ///
-  /// Returns a [SubSonicResponse] object.
-  /// The [SubSonicResponse] object contains an [Album] object.
+  /// Returns an [Album] object.
   /// The [Album] object contains a list of [Song] objects.
-  Future<SubSonicResponse> getAlbum(String album) async {
+  Future<Album> getAlbum(String album) async {
     final response = await http.get(Uri.parse(
         '$_url/rest/getAlbum.view?u=$_username&t=$_token&s=$_salt&c=$_clientName&v=$_clientVersion&id=$album&f=$format'));
-    return SubSonicResponse.fromJson(json.decode(response.body));
+    var res = SubSonicResponse.fromJson(json.decode(response.body));
+    return res.album!;
   }
 
   /// Get Genres
   ///
   /// Gets all genres in the music collection.
   ///
-  /// Returns a [SubSonicResponse] object.
-  /// The [SubSonicResponse] object contains a list of [Genre] objects.
-  Future<SubSonicResponse> getGenres() async {
+  /// Returns a [List] of [Genre] objects.
+  Future<List<Genre>> getGenres() async {
     final response = await http.get(Uri.parse(
         '$_url/rest/getGenres.view?u=$_username&t=$_token&s=$_salt&c=$_clientName&v=$_clientVersion&f=$format'));
-    return SubSonicResponse.fromJson(json.decode(response.body));
+    var res = SubSonicResponse.fromJson(json.decode(response.body));
+    return res.genres!;
   }
 
   /// Stream Media

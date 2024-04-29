@@ -12,7 +12,7 @@ Just add the package to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  subsonic_api: ^0.0.1
+  subsonic_api: ^0.0.2
 ```
 
 Then import the package in your Dart code:
