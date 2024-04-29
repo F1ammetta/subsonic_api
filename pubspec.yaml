@@ -1,6 +1,6 @@
 name: subsonic_api
 description: Package that provides a simple API to interact with SubSonic API compatible servers.
-version: 0.0.2
+version: 0.0.3
 repository: https://github.com/f1ammetta/subsonic_api
 
 environment:

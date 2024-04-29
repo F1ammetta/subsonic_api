@@ -3,3 +3,7 @@
 - Initial version.
 
 ## 0.0.2
+
+## 0.0.3
+
+- Added support for fetching all songs from the server.
