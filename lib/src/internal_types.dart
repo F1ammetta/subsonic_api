@@ -3,25 +3,30 @@ import 'subsonicapi_types.dart';
 
 /// A class representing an artist index.
 class ArtistIndex {
-  final String? name;
   final List<Artist>? artists;
 
   /// Create an [ArtistIndex] object.
-  ArtistIndex({this.artists, this.name});
+  ArtistIndex({this.artists});
 
   /// Create an [ArtistIndex] object from a JSON object.
-  factory ArtistIndex.fromJson(Map<String, dynamic> json) {
-    List<Artist> artists = [];
-    for (var artist in json['artist']) {
-      artists.add(Artist(
-          id: artist['id'],
-          name: utf8.decode(artist['name'].runes.toList()),
-          albumCount: artist['albumCount'],
-          coverArt: artist['coverArt'],
-          artistImageUrl: artist['artistImageUrl']));
+  factory ArtistIndex.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return ArtistIndex();
     }
 
-    return ArtistIndex(name: json['name'], artists: artists);
+    List<Artist> artists = [];
+    for (var index in json['index']) {
+      for (var artist in index['artist']) {
+        artists.add(Artist(
+            id: artist['id'],
+            name: utf8.decode(artist['name'].runes.toList()),
+            albumCount: artist['albumCount'],
+            coverArt: artist['coverArt'],
+            artistImageUrl: artist['artistImageUrl']));
+      }
+    }
+
+    return ArtistIndex(artists: artists);
   }
 }
 
@@ -38,7 +43,7 @@ class Artists {
     return json != null
         ? Artists(
             ignoredArticles: json['ignoredArticles'],
-            index: ArtistIndex.fromJson(json['index'][0]))
+            index: ArtistIndex.fromJson(json))
         : Artists();
   }
 }
@@ -69,6 +74,7 @@ class SubSonicResponse {
   final Map<String, dynamic>? json;
   final List<Genre>? genres;
   final License? license;
+  final SearchResult? searchResult;
 
   /// Create a [SubSonicResponse] object.
   SubSonicResponse({
@@ -89,6 +95,7 @@ class SubSonicResponse {
     this.json,
     this.genres,
     this.license,
+    this.searchResult,
   });
 
   /// Create a [SubSonicResponse] object from a JSON object.
@@ -111,6 +118,7 @@ class SubSonicResponse {
               json['genres']['genre'].map((x) => Genre.fromJson(x)))
           : null,
       license: License.fromJson(json['license']),
+      searchResult: SearchResult.fromJson(json['searchResult3']),
       musicFolders: json['musicFolders'],
       indexes: json['indexes'],
       directory: json['directory'],
