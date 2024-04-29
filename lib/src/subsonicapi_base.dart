@@ -6,31 +6,44 @@ import 'subsonicapi_types.dart';
 import 'internal_types.dart';
 import 'dart:typed_data';
 
+/// Create a salt
+///
+/// Creates a salt for use in creating a token.
+String createSalt() {
+  return DateTime.now().millisecondsSinceEpoch.toString();
+}
+
+/// Create a token
+///
+/// Creates a token for use in authenticating with the Subsonic server.
+String createToken(String password, String salt) {
+  return md5.convert(utf8.encode(password + salt)).toString();
+}
+
 class SubSonicClient {
+  /// The URL of the Subsonic server.
   final String _url;
+
+  /// The username for the Subsonic server.
   final String _username;
+
+  /// The auth token for the Subsonic server.
   final String _token;
+
+  /// The salt for the Subsonic server.
   final String _salt;
+
+  /// The client name.
   final String _clientName;
+
+  /// The client version.
   final String _clientVersion;
+
+  /// The format of the response.
   final String format = 'json';
 
   SubSonicClient(this._url, this._username, this._token, this._salt,
       this._clientName, this._clientVersion);
-
-  /// Create a salt
-  ///
-  /// Creates a salt for use in creating a token.
-  static String createSalt() {
-    return DateTime.now().millisecondsSinceEpoch.toString();
-  }
-
-  /// Create a token
-  ///
-  /// Creates a token for use in authenticating with the Subsonic server.
-  static String createToken(String password, String salt) {
-    return md5.convert(utf8.encode(password + salt)).toString();
-  }
 
   /// Ping the server
   ///
@@ -166,5 +179,46 @@ class SubSonicClient {
   Uri getStreamUrl(String id) {
     return Uri.parse(
         '$_url/rest/stream.view?u=$_username&t=$_token&s=$_salt&c=$_clientName&v=$_clientVersion&id=$id&f=$format');
+  }
+
+  /// Search 3
+  ///
+  /// Searches the music collection.
+  ///
+  /// Returns a [SearchResult] object
+  /// The [SearchResult] object contains lists of [Artist], [Album], or [Song] objects.
+  /// The type of objects returned depends on the search query and parameters.
+  Future<SearchResult> search3(String query, SearchParams params) async {
+    final response = await http.get(Uri.parse(
+        '$_url/rest/search3.view?u=$_username&t=$_token&s=$_salt&c=$_clientName&v=$_clientVersion&query=$query&$params&f=$format'));
+    var res = SubSonicResponse.fromJson(json.decode(response.body));
+    return res.searchResult!;
+  }
+
+  /// Get songs
+  ///
+  /// Gets all songs in the music collection.
+  ///
+  /// Returns a [List] of [Song] objects.
+  Future<List<Song>> getSongs() async {
+    int d = 0;
+    int offset = 0;
+    List<Song> songs = [];
+    var params = SearchParams(
+        artistCount: 0,
+        artistOffset: 0,
+        albumCount: 0,
+        albumOffset: 0,
+        songCount: 500,
+        songOffset: offset);
+    while (d == 0) {
+      params.songOffset = offset;
+      var result = await search3('', params);
+      songs.addAll(result.songs!);
+      offset += 500;
+      d = 500 - result.songs!.length;
+    }
+
+    return songs;
   }
 }
