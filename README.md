@@ -12,13 +12,13 @@ Just add the package to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  subsonic_api: ^0.0.3
+  subsonic_api: ^0.0.4
 ```
 
 Then import the package in your Dart code:
 
 ```dart
-import 'package:subsonic_wrapper/subsonic_api.dart';
+import 'package:subsonic_wrapper/subsonic_api.dart' as subsonic;
 ```
 
 ## Usage
@@ -26,9 +26,9 @@ import 'package:subsonic_wrapper/subsonic_api.dart';
 To use this package, you'd need to generate your authentication token and salt.
 
 ```dart
-String salt = SubSonicClient.createSalt();
+String salt = subsonic.createSalt();
 
-String token = SubSonicClient.createToken('password', salt);
+String token = subsonic.createToken('password', salt);
 ```
 
 this is the preffered way to generate the token and salt, since it doen't expose the password anywhere in the application.
@@ -38,8 +38,8 @@ Then, you need to create a `SubSonicClient` object with the server URL, username
 ```dart
 
 SubSonicClient client = SubSonicClient(
-    'http://server:port',
-    'admin',
+    'http(s)://server(:port)',
+    'username',
     token,
     salt,
     'Client Name',
