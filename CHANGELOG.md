@@ -7,3 +7,7 @@
 ## 0.0.3
 
 - Added support for fetching all songs from the server.
+
+## 0.0.4
+
+- Added support for fetching album lists from the server.
