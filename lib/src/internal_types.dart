@@ -22,6 +22,7 @@ class ArtistIndex {
             name: utf8.decode(artist['name'].runes.toList()),
             albumCount: artist['albumCount'],
             coverArt: artist['coverArt'],
+            albums: [],
             artistImageUrl: artist['artistImageUrl']));
       }
     }
@@ -55,6 +56,9 @@ class Artists {
 /// Only the fields that are populated by the server will be non-null.
 /// The fields are populated based on the type of request made to the server.
 ///
+/// The parsing of some fields may not work with all SubSonic servers.
+/// This package was tested with a Navidrome server, hence the parsing inconsistencies.
+///
 /// This class is used internally by the SubSonic API client and should not be used directly.
 class SubSonicResponse {
   final String status;
@@ -75,6 +79,9 @@ class SubSonicResponse {
   final List<Genre>? genres;
   final License? license;
   final SearchResult? searchResult;
+  final List<Playlist>? playlists;
+  final Playlist? playlist;
+  final List<Album>? albumList;
 
   /// Create a [SubSonicResponse] object.
   SubSonicResponse({
@@ -96,6 +103,9 @@ class SubSonicResponse {
     this.genres,
     this.license,
     this.searchResult,
+    this.playlists,
+    this.playlist,
+    this.albumList,
   });
 
   /// Create a [SubSonicResponse] object from a JSON object.
@@ -119,10 +129,19 @@ class SubSonicResponse {
           : null,
       license: License.fromJson(json['license']),
       searchResult: SearchResult.fromJson(json['searchResult3']),
+      albumList: json['albumList2'] != null
+          ? List<Album>.from(json['albumList2']['album']
+              .map((x) => Album.fromSong(Song.fromJson(x), x['songCount'])))
+          : null,
       musicFolders: json['musicFolders'],
       indexes: json['indexes'],
       directory: json['directory'],
       json: json,
+      playlists: json['playlists'] != null
+          ? List<Playlist>.from(
+              json['playlists']['playlist'].map((x) => Playlist.fromJson(x)))
+          : null,
+      playlist: Playlist.fromJson(json['playlist']),
     );
   }
 }

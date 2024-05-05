@@ -50,6 +50,8 @@ class SubSonicClient {
   /// Pings the server to check if it is online.
   /// Returns a [SubSonicResponse] object.
   Future<SubSonicResponse> ping() async {
+    print(
+        '$_url/rest/ping.view?u=$_username&t=$_token&s=$_salt&c=$_clientName&v=$_clientVersion&f=$format');
     final response = await http.get(Uri.parse(
         '$_url/rest/ping.view?u=$_username&t=$_token&s=$_salt&c=$_clientName&v=$_clientVersion&f=$format'));
     return SubSonicResponse.fromJson(json.decode(response.body));
@@ -108,6 +110,7 @@ class SubSonicClient {
   /// Gets all artists in the music collection.
   ///
   /// Returns a [List] of [Artist] objects.
+  /// These [Artist] objects do NOT contain the list of [Album] objects.
   Future<List<Artist>> getArtists() async {
     final response = await http.get(Uri.parse(
         '$_url/rest/getArtists.view?u=$_username&t=$_token&s=$_salt&c=$_clientName&v=$_clientVersion&f=$format'));
@@ -121,6 +124,7 @@ class SubSonicClient {
   ///
   /// Returns an [Artist] object.
   /// The [Artist] object contains a list of [Album] objects.
+  /// These [Album] objects do NOT contain the list of [Song] objects.
   Future<Artist> getArtist(String artistId) async {
     final response = await http.get(Uri.parse(
         '$_url/rest/getArtist.view?u=$_username&t=$_token&s=$_salt&c=$_clientName&v=$_clientVersion&id=$artistId&f=$format'));
@@ -139,6 +143,18 @@ class SubSonicClient {
         '$_url/rest/getAlbum.view?u=$_username&t=$_token&s=$_salt&c=$_clientName&v=$_clientVersion&id=$album&f=$format'));
     var res = SubSonicResponse.fromJson(json.decode(response.body));
     return res.album!;
+  }
+
+  /// Get album list
+  ///
+  /// Gets a list of albums organized by ID3 tags.
+  ///
+  /// Returns a [List] of [Album] objects.
+  Future<List<Album>> getAlbumList2(AlbumParams params) async {
+    final response = await http.get(Uri.parse(
+        '$_url/rest/getAlbumList2.view?u=$_username&t=$_token&s=$_salt&c=$_clientName&v=$_clientVersion&$params&f=$format'));
+    var res = SubSonicResponse.fromJson(json.decode(response.body));
+    return res.albumList!;
   }
 
   /// Get Genres
@@ -220,5 +236,31 @@ class SubSonicClient {
     }
 
     return songs;
+  }
+
+  /// Get playlists
+  ///
+  /// Gets all playlists in the music collection.
+  ///
+  /// Returns a [List] of [Playlist] objects.
+  /// These [Playlist] objects do NOT contain the list of [Song] objects.
+  Future<List<Playlist>> getPlaylists() async {
+    final response = await http.get(Uri.parse(
+        '$_url/rest/getPlaylists.view?u=$_username&t=$_token&s=$_salt&c=$_clientName&v=$_clientVersion&f=$format'));
+    var res = SubSonicResponse.fromJson(json.decode(response.body));
+    return res.playlists!;
+  }
+
+  /// Get playlist
+  ///
+  /// Gets a playlist by ID.
+  ///
+  /// Returns a [Playlist] object.
+  /// The [Playlist] object contains a list of [Song] objects.
+  Future<Playlist> getPlaylist(String playlistId) async {
+    final response = await http.get(Uri.parse(
+        '$_url/rest/getPlaylist.view?u=$_username&t=$_token&s=$_salt&c=$_clientName&v=$_clientVersion&id=$playlistId&f=$format'));
+    var res = SubSonicResponse.fromJson(json.decode(response.body));
+    return res.playlist!;
   }
 }
