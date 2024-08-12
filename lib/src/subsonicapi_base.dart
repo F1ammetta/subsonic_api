@@ -263,4 +263,9 @@ class SubSonicClient {
     var res = SubSonicResponse.fromJson(json.decode(response.body));
     return res.playlist!;
   }
+
+  @override
+  String toString() {
+    return '$_url~$_username~$_token~$_salt~$_clientName~$_clientVersion';
+  }
 }
