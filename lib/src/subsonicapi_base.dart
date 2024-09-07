@@ -211,6 +211,34 @@ class SubSonicClient {
     return res.searchResult!;
   }
 
+  /// Get Cover
+  ///
+  /// Gets the cover for the given id
+  /// Returns a [Uint8List] object
+  Future<Uint8List> getCover(String id, int size) async {
+    final response = await http.get(Uri.parse(
+        '$_url/rest/getCoverArt.view?u=$_username&t=$_token&s=$_salt&c=$_clientName&v=$_clientVersion&id=$id&size=$size&f=$format'));
+
+    return response.bodyBytes;
+  }
+
+  /// Get Cover Stream
+  ///
+  /// Gets the cover for the given id
+  /// Returns a [Stream] of [Uint8List] objects
+  Stream<Uint8List> getCoverStream(String id, int size) async* {
+    final request = http.StreamedRequest(
+        'GET',
+        Uri.parse(
+            '$_url/rest/getCoverArt.view?u=$_username&t=$_token&s=$_salt&c=$_clientName&v=$_clientVersion&id=$id&size=$size&f=$format'));
+    unawaited(request.sink.close());
+    final response = await request.send();
+
+    await for (var chunk in response.stream) {
+      yield Uint8List.fromList(chunk);
+    }
+  }
+
   /// Get songs
   ///
   /// Gets all songs in the music collection.
