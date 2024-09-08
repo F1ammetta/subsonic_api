@@ -12,6 +12,6 @@
 
 - Added support for fetching album lists from the server.
 
-## 0.0.5
+## 0.0.6
 
 - Added endpoint for fetching and streaming cover art

@@ -1,6 +1,6 @@
 name: subsonic_api
 description: Package that provides a simple API to interact with SubSonic API compatible servers. Focused on Navidrome.
-version: 0.0.5
+version: 0.0.6
 repository: https://github.com/f1ammetta/subsonic_api
 
 environment:
